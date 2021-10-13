@@ -169,6 +169,13 @@ if [ -n "$VPN_IKEV2_ONLY" ]; then
   VPN_IKEV2_ONLY=$(noquotes "$VPN_IKEV2_ONLY")
 fi
 
+if [ -n "$LEFTSUBNETS" ]; then
+  LEFTSUBNETS=$(nospaces "$LEFTSUBNETS")
+  LEFTSUBNETS=$(noquotes "$LEFTSUBNETS")
+else
+  LEFTSUBNETS="0.0.0.0/0"
+fi
+
 if [ -z "$VPN_IPSEC_PSK" ] || [ -z "$VPN_USER" ] || [ -z "$VPN_PASSWORD" ]; then
   exiterr "All VPN credentials must be specified. Edit your 'env' file and re-enter them."
 fi
@@ -365,7 +372,7 @@ if [ "$disable_ipsec_xauth" != "yes" ]; then
 cat >> /etc/ipsec.conf <<EOF
 conn xauth-psk
   auto=add
-  leftsubnet=0.0.0.0/0
+  leftsubnets=$LEFTSUBNETS
   rightaddresspool=$XAUTH_POOL
   modecfgdns=$DNS_SRVS
   leftxauthserver=yes
